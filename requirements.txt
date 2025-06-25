@@ -11,7 +11,6 @@ jax==0.4.30
 jaxlib==0.4.30
 kiwisolver==1.4.7
 matplotlib==3.9.4
-mediapipe-rpi4==0.8.8
 ml_dtypes==0.5.1
 numpy==1.26.4
 opencv-contrib-python==4.11.0.86
@@ -28,3 +27,5 @@ sentencepiece==0.2.0
 six==1.17.0
 sounddevice==0.5.2
 zipp==3.23.0
+opencv-python
+picamera2
