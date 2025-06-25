@@ -1,26 +1,28 @@
 import cv2
-from vision.hand_detection import HandDetector
 from vision.face_detection import FaceDetector
-
+from vision.hand_detection import HandDetector
+from vision.finger_tracking import FingerTracker
 
 cap = cv2.VideoCapture(0)
-detector_hand = HandDetector()
-detector_face = FaceDetector()
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 
+face_detector = FaceDetector()
+hand_detector = HandDetector()
+finger_tracker = FingerTracker()
 
 while True:
     ret, frame = cap.read()
     if not ret:
         break
 
-    frame = detector_hand.detect(frame)
-    frame = detector_face.detect(frame)
-    
+    frame = face_detector.detect(frame)
+    frame = hand_detector.detect(frame)
+    frame = finger_tracker.track(frame)
 
-    cv2.imshow("Pi Vision", frame)
+    cv2.imshow("Computer Vision Pi", frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
 cv2.destroyAllWindows()
-
