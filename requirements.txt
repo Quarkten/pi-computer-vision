@@ -29,3 +29,5 @@ sounddevice==0.5.2
 zipp==3.23.0
 opencv-python
 picamera2
+opencv-python
+numpy
