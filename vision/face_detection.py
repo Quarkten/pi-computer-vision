@@ -1,9 +1,12 @@
 import cv2
+import os
 
 class FaceDetector:
     def __init__(self):
-        # Use LBP for faster grayscale face detection
-        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'lbpcascade_frontalface.xml')
+        path = "/usr/share/opencv4/lbpcascades/lbpcascade_frontalface.xml"
+        if not os.path.exists(path):
+            raise FileNotFoundError("Cascade not found at " + path)
+        self.face_cascade = cv2.CascadeClassifier(path)
 
     def detect(self, frame_gray, frame_color):
         faces = self.face_cascade.detectMultiScale(frame_gray, scaleFactor=1.1, minNeighbors=5)
