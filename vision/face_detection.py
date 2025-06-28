@@ -2,11 +2,11 @@ import cv2
 
 class FaceDetector:
     def __init__(self):
-        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        # Use LBP for faster grayscale face detection
+        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'lbpcascade_frontalface.xml')
 
-    def detect(self, frame):
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
+    def detect(self, frame_gray, frame_color):
+        faces = self.face_cascade.detectMultiScale(frame_gray, scaleFactor=1.1, minNeighbors=5)
         for (x, y, w, h) in faces:
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        return frame
+            cv2.rectangle(frame_color, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        return frame_color
