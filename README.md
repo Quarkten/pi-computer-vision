@@ -1,4 +1,6 @@
-Fast real-time face and hand detection using OpenCV on Raspberry Pi with OV7251 grayscale camera.
+# Pi Computer Vision (with MediaPipe Hands + Face Detection)
+
+Real-time face and hand detection using OpenCV and MediaPipe Hands on Raspberry Pi with OV7251 grayscale camera.
 
 ## Requirements
 - Raspberry Pi 4 or 5
@@ -23,7 +25,8 @@ python main.py
 
 Press `q` to quit the video window.
 
-## Notes
-- Face detection uses LBP for speed
-- Hand detection is contour-based
-- Resolution and FPS are adjustable
+## Features
+- LBP face detection (fast on grayscale input)
+- MediaPipe hand landmark tracking (21 points)
+- Vertical camera flip for inverted cameras
+- FPS display overlay
