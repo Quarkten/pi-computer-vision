@@ -1,10 +1,12 @@
 import cv2
 import subprocess
 import numpy as np
-
-from vision.object_detection import ObjectDetector
+import time
+from vision.object_detection import HandDetector
 
 WIDTH, HEIGHT = 640, 480
+FPS_CAP = 30
+FRAME_SKIP = 2  # Only process every 2nd frame
 
 command = [
     "libcamera-vid",
@@ -13,27 +15,46 @@ command = [
     "--height", str(HEIGHT),
     "--codec", "yuv420",
     "-n",
-    "-o", "-",
+    "-o", "-"
 ]
 
 proc = subprocess.Popen(command, stdout=subprocess.PIPE, bufsize=WIDTH * HEIGHT * 3)
 
-detector = ObjectDetector()
+hand_detector = HandDetector()
+
+prev_time = time.time()
+frame_idx = 0
 
 while True:
     yuv_size = WIDTH * HEIGHT * 3 // 2
     raw_frame = proc.stdout.read(yuv_size)
+
     if not raw_frame:
         print("❌ No frame received.")
         break
 
-    yuv = np.frombuffer(raw_frame, dtype=np.uint8).reshape((HEIGHT * 3 // 2, WIDTH))
-    color_frame = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_I420)
+    try:
+        yuv = np.frombuffer(raw_frame, dtype=np.uint8).reshape((HEIGHT * 3 // 2, WIDTH))
+        frame = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_I420)
+    except:
+        continue
 
-    color_frame = detector.detect(color_frame)
+    # FPS limiting
+    now = time.time()
+    elapsed = now - prev_time
+    if elapsed < 1 / FPS_CAP:
+        continue
+    prev_time = now
 
-    cv2.imshow("Pi Camera Vision", color_frame)
+    # Skip frames
+    frame_idx += 1
+    if frame_idx % FRAME_SKIP != 0:
+        continue
 
+    # Process only every few frames
+    frame = hand_detector.detect(frame)
+
+    cv2.imshow("Hand Detection", frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
