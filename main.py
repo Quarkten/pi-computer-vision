@@ -23,7 +23,7 @@ detector = ObjectDetector()
 
 prev_time = time.time()
 frame_count = 0
-skip_rate = 2
+skip_rate = 3  # do detection every 3rd frame
 
 while True:
     yuv_size = WIDTH * HEIGHT * 3 // 2
@@ -33,20 +33,19 @@ while True:
         break
 
     yuv = np.frombuffer(raw_frame, dtype=np.uint8).reshape((HEIGHT * 3 // 2, WIDTH))
-    frame_color = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_I420)
-    frame_color = cv2.flip(frame_color, 0)  # Invert vertically
-    frame_gray = cv2.cvtColor(frame_color, cv2.COLOR_BGR2GRAY)
+    color_frame = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_I420)
+    gray_frame = cv2.cvtColor(color_frame, cv2.COLOR_BGR2GRAY)
 
     frame_count += 1
     if frame_count % skip_rate == 0:
-        frame_color = detector.detect(frame_gray, frame_color)
+        color_frame = detector.detect(gray_frame, color_frame)
 
     curr_time = time.time()
     fps = 1 / (curr_time - prev_time)
     prev_time = curr_time
 
-    cv2.putText(frame_color, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-    cv2.imshow("Pi BW Camera Feed", frame_color)
+    cv2.putText(color_frame, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+    cv2.imshow("Pi Camera Vision", color_frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
