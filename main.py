@@ -1,7 +1,6 @@
 import cv2
 import subprocess
 import numpy as np
-import time
 
 from vision.object_detection import ObjectDetector
 
@@ -21,8 +20,6 @@ proc = subprocess.Popen(command, stdout=subprocess.PIPE, bufsize=WIDTH * HEIGHT 
 
 detector = ObjectDetector()
 
-prev_time = time.time()
-
 while True:
     yuv_size = WIDTH * HEIGHT * 3 // 2
     raw_frame = proc.stdout.read(yuv_size)
@@ -35,11 +32,6 @@ while True:
 
     color_frame = detector.detect(color_frame)
 
-    curr_time = time.time()
-    fps = 1 / (curr_time - prev_time)
-    prev_time = curr_time
-
-    cv2.putText(color_frame, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
     cv2.imshow("Pi Camera Vision", color_frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
