@@ -22,8 +22,6 @@ proc = subprocess.Popen(command, stdout=subprocess.PIPE, bufsize=WIDTH * HEIGHT 
 detector = ObjectDetector()
 
 prev_time = time.time()
-frame_count = 0
-skip_rate = 3  # do detection every 3rd frame
 
 while True:
     yuv_size = WIDTH * HEIGHT * 3 // 2
@@ -34,11 +32,8 @@ while True:
 
     yuv = np.frombuffer(raw_frame, dtype=np.uint8).reshape((HEIGHT * 3 // 2, WIDTH))
     color_frame = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_I420)
-    gray_frame = cv2.cvtColor(color_frame, cv2.COLOR_BGR2GRAY)
 
-    frame_count += 1
-    if frame_count % skip_rate == 0:
-        color_frame = detector.detect(gray_frame, color_frame)
+    color_frame = detector.detect(color_frame)
 
     curr_time = time.time()
     fps = 1 / (curr_time - prev_time)
